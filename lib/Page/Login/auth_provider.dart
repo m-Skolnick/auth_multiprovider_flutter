@@ -6,6 +6,10 @@ class AuthProvider with ChangeNotifier {
   String myUserId;
   bool isAuthenticating = false;
 
+  AuthProvider() {
+    //If you store a refresh token you could attempt to sign-in with the refresh token here
+  }
+
   signIn() async {
     // Do your firebase or other auth sign in here
     await simulateAuthentication().then((myUserId) {
