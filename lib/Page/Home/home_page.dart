@@ -1,6 +1,5 @@
 import 'package:auth_multiprovider_flutter/Page/Home/drawer.dart';
 import 'package:auth_multiprovider_flutter/Page/Home/home_provider.dart';
-import 'package:auth_multiprovider_flutter/Page/Login/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
