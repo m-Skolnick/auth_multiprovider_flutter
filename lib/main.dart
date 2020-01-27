@@ -1,16 +1,15 @@
-import 'package:auth_multiprovider_flutter/Page/Home/home_page.dart';
 import 'package:auth_multiprovider_flutter/Page/Home/home_provider.dart';
-import 'package:auth_multiprovider_flutter/Page/Login/auth_provider.dart';
-import 'package:auth_multiprovider_flutter/Page/Login/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import "router.dart" as router;
+
+import 'Page/Login/login_provider.dart';
+import 'common/router.dart' as router;
 
 void main() {
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider<AuthProvider>(
-        create: (context) => AuthProvider(),
+      ChangeNotifierProvider<LoginProvider>(
+        create: (context) => LoginProvider(),
       ),
       ChangeNotifierProvider<HomeProvider>(
         create: (context) => HomeProvider(),

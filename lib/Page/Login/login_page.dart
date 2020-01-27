@@ -1,5 +1,6 @@
-import 'package:auth_multiprovider_flutter/Page/Login/auth_provider.dart';
-import 'package:auth_multiprovider_flutter/router.dart';
+import 'package:auth_multiprovider_flutter/Page/Login/login_provider.dart';
+import 'package:auth_multiprovider_flutter/common/auth_service.dart';
+import 'package:auth_multiprovider_flutter/common/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -7,23 +8,30 @@ import 'package:provider/provider.dart';
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final _authProvider = Provider.of<AuthProvider>(context);
+    final _loginProvider = Provider.of<LoginProvider>(context);
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Wrap(
+          spacing: 12,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          direction: Axis.vertical,
           children: <Widget>[
             Text("You're on the Log in page"),
+            Text("Current userID: ${Auth.shared.myUserId}"),
             Padding(
-              padding: EdgeInsets.only(top: 12.0),
+              padding: EdgeInsets.only(top: 22.0),
             ),
-            Text("Current userID: ${_authProvider.myUserId}"),
-            Padding(
-              padding: EdgeInsets.only(top: 44.0),
+            Container(
+              width: screenWidth - 44,
+              child: Text(
+                _loginProvider.authStateDescription,
+                textAlign: TextAlign.center,
+              ),
             ),
-            _authProvider.isAttemptingRefreshTokenSignIn
-                ? RefreshTokenSignInHappening()
-                : SignInOptionsWidget(),
+            _loginProvider.authState == AuthState.attemptingRefreshTokenSignIn
+                ? CircularProgressIndicator()
+                : SignInButton(),
           ],
         ),
       ),
@@ -31,45 +39,21 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-class RefreshTokenSignInHappening extends StatelessWidget {
+class SignInButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      direction: Axis.vertical,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 20.0,
-      children: <Widget>[
-        Text("Currently attempting refresh token login...."),
-        CircularProgressIndicator(),
-      ],
-    );
-  }
-}
-
-class SignInOptionsWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final _authProvider = Provider.of<AuthProvider>(context);
-    return Wrap(
-      direction: Axis.vertical,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 12.0,
-      children: <Widget>[
-        Text(_authProvider.isAuthenticating
-            ? "Signing in..."
-            : "We're pretending your refresh token login failed"),
-        RaisedButton(
-          padding: EdgeInsets.all(8.0),
-          onPressed: () async {
-            String myUserId = await _authProvider.signIn();
-            if (myUserId != null)
-              Navigator.pushReplacementNamed(context, HomePageRoute);
-          },
-          child: _authProvider.isAuthenticating
-              ? CircularProgressIndicator()
-              : Text("Sign in"),
-        ),
-      ],
+    final _loginProvider = Provider.of<LoginProvider>(context);
+    return RaisedButton(
+      padding: EdgeInsets.all(8.0),
+      onPressed: () async {
+        bool loginSuccess = await _loginProvider.signIn();
+        if (loginSuccess) {
+          Navigator.pushReplacementNamed(context, HomePageRoute);
+        }
+      },
+      child: _loginProvider.authState == AuthState.attemptingSignIn
+          ? CircularProgressIndicator()
+          : Text("Sign in"),
     );
   }
 }
